@@ -1,7 +1,8 @@
 {
-  "name": "vscode-extension-demo",
-  "displayName": "vscode-extension-demo",
-  "description": "extension demo",
+  "publisher": "ckh",
+  "name": "i-konwlede",
+  "displayName": "我的碎片",
+  "description": "我的碎片",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.71.0"
@@ -10,10 +11,27 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+			"activitybar": [
+				{
+					"id": "i-konwlede",
+					"title": "我的碎片",
+					"icon": "logo.svg"
+				}
+			]
+		},
+    "views": {
+      "i-konwlede": [
+        {
+          "id": "i-konwlede.tree.sidebar",
+          "name": "VS Extension Demo Menu"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

@@ -14,11 +14,18 @@
         "curly": "warn",
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
-        "semi": "off"
+        "semi": ["error", "always"],
+        "max-len": ["error", {"code": 80}],
+        "indent": ["error", "tab"],
+        "no-console": ["error"],
+        "max-lines": ["error", {"max": 300, "skipBlankLines": false, "skipComments": false}],
+        "max-params": ["error", {"max": 3}],
+        "quotes": ["error", "double", {"allowTemplateLiterals": true}]
     },
     "ignorePatterns": [
         "out",
         "dist",
-        "**/*.d.ts"
+        "**/*.d.ts",
+        "src/test"
     ]
 }
