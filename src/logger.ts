@@ -11,7 +11,7 @@ export class Logger {
 	}
 
 	static info(msg: string) {
-		this.logger._outPut.appendLine(`[info][${this.logger.logTime}] ${msg}`);
+		this.logger._outPut.appendLine(`[INFO][${this.logger.logTime}] ${msg}`);
 	}
 
 	private get logTime(): string {

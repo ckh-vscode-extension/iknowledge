@@ -1,6 +1,6 @@
 {
   "publisher": "ckh",
-  "name": "i-konwlede",
+  "name": "i-knowledge",
   "displayName": "我的碎片",
   "description": "我的碎片",
   "version": "0.0.1",
@@ -16,22 +16,64 @@
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
-			"activitybar": [
-				{
-					"id": "i-konwlede",
-					"title": "我的碎片",
-					"icon": "logo.svg"
-				}
-			]
-		},
-    "views": {
-      "i-konwlede": [
+      "activitybar": [
         {
-          "id": "i-konwlede.tree.sidebar",
-          "name": "VS Extension Demo Menu"
+          "id": "i-knowledge",
+          "title": "我的碎片",
+          "icon": "logo.svg"
         }
       ]
-    }
+    },
+    "views": {
+      "i-knowledge": [
+        {
+          "id": "i-knowledge.note.sidebar",
+          "name": "笔记本"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+          {
+            "command": "i-knowledge.dir.create",
+            "when": "view == i-knowledge.note.sidebar && viewItem == folder || viewItem == rootFolder"
+          },
+          {
+            "command": "i-knowledge.file.create",
+            "when": "view == i-knowledge.note.sidebar && viewItem == folder || viewItem == rootFolder"
+          },
+          {
+            "command": "i-knowledge.path.delete",
+            "when": "view == i-knowledge.note.sidebar && viewItem == folder || viewItem == file"
+          },
+          {
+            "command": "i-knowledge.path.rename",
+            "when": "view == i-knowledge.note.sidebar && viewItem == folder || viewItem == file"
+          }
+        ]
+    },
+    "commands": [
+      {
+        "command": "i-knowledge.dir.create",
+        "title": "新建目录"
+      },
+      {
+        "command": "i-knowledge.file.create",
+        "title": "新建文件"
+      },
+      {
+        "command": "i-knowledge.path.delete",
+        "title": "删除"
+      },
+      {
+        "command": "i-knowledge.path.rename",
+        "title": "重命名"
+      },
+      {
+        "command": "i-knowledge.file.open",
+        "title": "打开文件"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -45,19 +87,19 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.71.0",
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "16.x",
+    "@types/vscode": "^1.71.0",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
+    "@vscode/test-electron": "^2.1.5",
     "eslint": "^8.20.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
-    "typescript": "^4.7.4",
     "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
     "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "@vscode/test-electron": "^2.1.5"
+    "webpack-cli": "^4.10.0"
   }
 }
