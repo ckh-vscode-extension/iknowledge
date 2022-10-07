@@ -50,7 +50,10 @@ export class SidebarTree implements vscode.TreeDataProvider<El>, vscode.TreeDrag
 		treeDataTransfer: vscode.DataTransfer,
 		_: vscode.CancellationToken
 	): Promise<void> {
-		treeDataTransfer.set("application/vnd.code.tree.i-knowledge.note.sidebar", new vscode.DataTransferItem(source));
+		treeDataTransfer.set(
+			"application/vnd.code.tree.i-knowledge.note.sidebar",
+			new vscode.DataTransferItem(source)
+		);
 	}
 
 	dispose(): void {
