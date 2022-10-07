@@ -6,8 +6,15 @@ export function createFile(f: string) {
 	fs.writeFileSync(f, "", "utf8");
 }
 
-export function mkDir(dir: string) {
-	fs.mkdirSync(dir, { recursive: true });
+export function mkDir(dir: string): boolean {
+	if (fs.existsSync(dir)) { return true; }
+
+	try {
+		fs.mkdirSync(dir, { recursive: true });
+		return true;
+	} catch (error) {
+		return false;
+	}
 }
 
 export function rename(old: string, newPath: string) {
@@ -27,8 +34,11 @@ export function rename(old: string, newPath: string) {
 }
 
 export function deletePath(p: string) {
-	if (fs.existsSync(p)) {
+	if (fs.existsSync(p) && !isRootPath(p)) {
 		fs.rmSync(p, { recursive: true, force: true });
 	}
 }
 
+export function isRootPath(p :string): boolean {
+	return /^(\/|\w+:)(\/|\\)?$/.test(p);
+}

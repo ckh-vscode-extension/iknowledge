@@ -15,6 +15,12 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "i-knowledge.note.sidebar",
+        "contents": "当前没有任何笔记，请创建一个吧.\n[新建](command:i-knowledge.dir.create)"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -33,6 +39,13 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+					"command": "i-knowledge.sidebar.refresh",
+					"when": "view == i-knowledge.note.sidebar",
+					"group": "navigation"
+				}
+      ],
       "view/item/context": [
           {
             "command": "i-knowledge.dir.create",
@@ -54,6 +67,11 @@
     },
     "commands": [
       {
+        "command": "i-knowledge.sidebar.refresh",
+        "title": "刷新",
+        "icon": "$(refresh)"
+      },
+      {
         "command": "i-knowledge.dir.create",
         "title": "新建目录"
       },
@@ -72,6 +90,19 @@
       {
         "command": "i-knowledge.file.open",
         "title": "打开文件"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "iKnowledge",
+        "properties": {
+          "iKnowledge.notes": {
+            "type": "array",
+            "scope": "application",
+            "default": [],
+            "description": "笔记存储根路径"
+          }
+        }
       }
     ]
   },

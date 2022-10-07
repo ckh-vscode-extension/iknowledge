@@ -2,20 +2,20 @@ import * as vscode from "vscode";
 import { Logger } from "./logger";
 import * as fs from "fs";
 import * as path from "path";
+import { mkDir } from "./utils/file";
 
 export class SidebarTree implements vscode.TreeDataProvider<El>, vscode.TreeDragAndDropController<El> {
 	dropMimeTypes = ["application/vnd.code.tree.i-knowledge.note.sidebar"];
 	dragMimeTypes = ["text/uri-list"];
 
-	constructor(context: vscode.ExtensionContext) {
+	constructor(private _context: vscode.ExtensionContext) {
 		const view = vscode.window.createTreeView(
 			"i-knowledge.note.sidebar",
 			{ treeDataProvider: this, showCollapseAll: true, canSelectMany: true, dragAndDropController: this }
 		);
-		context.subscriptions.push(view);
+		_context.subscriptions.push(view);
 	}
 
-	private root: string = "D:/home/ckh/笔记";
 	private _onDidChangeTreeData: vscode.EventEmitter<El | undefined | void>
 		= new vscode.EventEmitter<El | undefined | void>();
 	readonly onDidChangeTreeData: vscode.Event<El | undefined | void>
@@ -60,14 +60,21 @@ export class SidebarTree implements vscode.TreeDataProvider<El>, vscode.TreeDrag
 		// nothing to dispose
 	}
 
+	addRoot(value: string) {
+		let notes = vscode.workspace.getConfiguration("iKnowledge").get<string[]>("notes");
+		notes?.push(value);
+		vscode.workspace.getConfiguration("iKnowledge").update("notes", notes, vscode.ConfigurationTarget.Global);
+		this.refresh();
+	}
+
 	private _getElement(element?: El): Thenable<El[]> {
 		return new Promise<El[]>(resolve => {
-			let fsPath: string = element ? element.fsPath : this.root;
 
 			if (!element) {
-				return resolve([new RootEl(this.root, this.refresh.bind(this))]);
+				return resolve(this._getRootEls());
 			}
-
+			
+			let fsPath: string = element.fsPath;
 			let result: El[] = [];
 			fs.readdir(fsPath, (err, files) => {
 				if (err) {
@@ -87,6 +94,24 @@ export class SidebarTree implements vscode.TreeDataProvider<El>, vscode.TreeDrag
 				}
 			});
 		});
+	}
+
+	private _getRootEls(): El[] {
+		let notes = vscode.workspace.getConfiguration("iKnowledge").get<string[]>("notes");
+		if (!notes || notes.length === 0) { return []; }
+
+		let result: El[] = [];
+		let newNotes: string[] = [];
+		for (const root of notes) {
+			if (path.isAbsolute(root) && mkDir(root)) {
+				let dir = path.resolve(root);
+				newNotes.push(dir);
+				result.push(new RootEl(dir, this.refresh.bind(this)));
+			}
+		}
+		vscode.workspace.getConfiguration("iKnowledge").update("notes", newNotes, vscode.ConfigurationTarget.Global);
+
+		return result;
 	}
 }
 

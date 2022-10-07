@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
+import { app } from "..";
 import { El } from "../sidebarTree";
 import { createFile, deletePath, mkDir, rename } from "../utils/file";
 
@@ -24,7 +25,8 @@ export function registerCommands(context: vscode.ExtensionContext) {
 				}
 			}).then(value => {
 				if (value) {
-					let dir = node.contextValue === "folder" ? node.fsPath : path.dirname(node.fsPath);
+					let dir = ["folder", "rootFolder"].includes(node.contextValue || "")
+						? node.fsPath : path.dirname(node.fsPath);
 					if (!/\..+$/.test(value)) {
 						value = value.endsWith(".") ? `${value}md` : `${value}.md`;
 					}
@@ -37,6 +39,17 @@ export function registerCommands(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"i-knowledge.dir.create",
 		(node: El) => {
+			if (!node) {
+				return vscode.window.showSaveDialog({
+					defaultUri: vscode.Uri.file("d:/"),
+					title: "目录名称",
+					saveLabel: "新建目录"
+				}).then(((rs: vscode.Uri | undefined) => {
+					if (rs) {
+						app.sidebar.addRoot(rs.fsPath);
+					}
+				}));
+			}
 			vscode.window.showInputBox({
 				placeHolder: "Enter the new dir",
 				validateInput: function(value: string): vscode.InputBoxValidationMessage | null {
@@ -47,7 +60,8 @@ export function registerCommands(context: vscode.ExtensionContext) {
 				}
 			}).then(value => {
 				if (value) {
-					let dir = node.contextValue === "folder" ? node.fsPath : path.dirname(node.fsPath);
+					let dir = ["folder", "rootFolder"].includes(node.contextValue || "")
+						? node.fsPath : path.dirname(node.fsPath);
 					mkDir(path.join(dir, value));
 					node.refreshTree(node);
 				}
@@ -93,6 +107,13 @@ export function registerCommands(context: vscode.ExtensionContext) {
 					node.refreshTree(node.parent);
 				}
 			});
+		}
+	));
+
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"i-knowledge.sidebar.refresh",
+		() => {
+			app.sidebar.refresh();
 		}
 	));
 }
