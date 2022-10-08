@@ -7,8 +7,8 @@ import { createFile, deletePath, mkDir, rename } from "../utils/file";
 export function registerCommands(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"i-knowledge.open.file",
-		(node: El) => {
-			vscode.commands.executeCommand("vscode.open", vscode.Uri.file(node.fsPath));
+		(fsPath: string) => {
+			vscode.commands.executeCommand("vscode.open", vscode.Uri.file(fsPath));
 		}
 	));
 

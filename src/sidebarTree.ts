@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { Logger } from "./logger";
 import * as fs from "fs";
 import * as path from "path";
-import { mkDir } from "./utils/file";
+import { mkDir, rename } from "./utils/file";
 
 export class SidebarTree implements vscode.TreeDataProvider<El>, vscode.TreeDragAndDropController<El> {
 	dropMimeTypes = ["application/vnd.code.tree.i-knowledge.note.sidebar"];
@@ -39,10 +39,18 @@ export class SidebarTree implements vscode.TreeDataProvider<El>, vscode.TreeDrag
 		token: vscode.CancellationToken
 	): Promise<void> {
 		const transferItem = sources.get("application/vnd.code.tree.i-knowledge.note.sidebar");
-		if (!transferItem) {
+		if (!transferItem || !target || !target.resourceUri?.fsPath) {
 			return;
 		}
-		let els = transferItem.value;
+		let els: El[] = transferItem.value;
+		let targetPath: string = target.fsPath;
+		if (target.contextValue === "file") {
+			targetPath = path.dirname(targetPath);
+		}
+		for (const el of els) {
+			rename(el.fsPath, path.join(targetPath, (el.label as string)));
+		}
+		this.refresh();
 	}
 
 	async handleDrag(
@@ -158,7 +166,7 @@ class FileEl extends El {
 		this.command = {
 			command: "i-knowledge.open.file",
 			title: "打开文件",
-			arguments: [this]
+			arguments: [this.fsPath]
 		};
 	}
 }

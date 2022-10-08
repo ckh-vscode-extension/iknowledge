@@ -6,7 +6,7 @@ import { SidebarTree } from "./sidebarTree";
 
 export function activate(context: vscode.ExtensionContext) {
 	Logger.info("extension is started!");
-	Logger.show();
+
 	registerCommands(context);
 
 	app.sidebar = new SidebarTree(context);
